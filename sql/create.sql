@@ -31,6 +31,7 @@ CREATE TABLE `fastfood_order` (
   `id` int not null AUTO_INCREMENT COMMENT 'ID',
   `user_id` int not null COMMENT '用户 ID',
   `product_id` int COMMENT '菜式 ID',
+  `group_id` int not null COMMENT '订单团 ID',
   `product_name` varchar(64) not null COMMENT '菜式名称',
   `product_category` varchar(20) not null COMMENT '所属类别',
   `price` decimal not null COMMENT '单价',
@@ -51,11 +52,3 @@ create table `fastfood_group` (
   `create_time` datetime not null COMMENT '创建时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COMMENT = '组团表';
-
--- 团订单与订单关联表
-create table `fastfood_group_order` (
-  `id` int not null AUTO_INCREMENT COMMENT 'ID',
-  `group_id` int not null COMMENT '团id',
-  `order_id` int not null COMMENT '订单id',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COMMENT = '团订单关联表';

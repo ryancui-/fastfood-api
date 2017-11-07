@@ -23,4 +23,19 @@ module.exports = class extends Base {
 
     return this.success(groupId);
   }
+
+  // 获取某个订单组信息
+  async getAction() {
+    const groupId = this.get('id');
+
+    const group = await this.model('group').where({
+      id: groupId
+    }).find();
+
+    if (think.isEmpty(group)) {
+      return this.fail('找不到订单组');
+    }
+
+    return this.success(group);
+  }
 };
