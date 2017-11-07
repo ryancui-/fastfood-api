@@ -1,6 +1,7 @@
 module.exports = class extends think.Controller {
   async __before() {
-    if (this.ctx.action === 'login') {
+    // 对 auth 的 API 不检查 JWT token
+    if (this.ctx.controller === 'api/auth') {
       return true;
     }
 
