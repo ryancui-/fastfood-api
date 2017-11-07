@@ -1,22 +1,36 @@
+# Fastfood 快订餐微信小程序后端
 
-Application created by [ThinkJS](http://www.thinkjs.org)
+订餐后端
 
-## Install dependencies
+## Quick start
+
+- 安装依赖
 
 ```
 npm install
 ```
 
-## Start server
+- 在 `src/config` 目录下新建 `config.development.js` 与 `adapter.development.js`
+
+```
+cp adapter.production.js adapter.development.js
+```
+
+按本地数据库配置。
+
+- `config.development.js` 的内容为：
+
+```javascript
+module.exports = {
+  weixin: {
+    appid: '', // 小程序 appid
+    secret: '' // 小程序密钥
+  }
+};
+```
+
+- Start server
 
 ```
 npm start
-```
-
-## Deploy with pm2
-
-Use pm2 to deploy app on production enviroment.
-
-```
-pm2 startOrReload pm2.json
 ```
