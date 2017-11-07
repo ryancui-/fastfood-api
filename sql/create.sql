@@ -4,6 +4,7 @@ CREATE TABLE `fastfood_user` (
   `openid` varchar(64) not null COMMENT '微信小程序 openid',
   `avatar_url` varchar(512) not null COMMENT '头像地址',
   `nickname` varchar(64) not null COMMENT '微信昵称',
+  `password` varchar(64) not null COMMENT '密码',
   `gender` int(1) not null COMMENT '性别',
   `register_time` datetime not null COMMENT '注册时间',
   `last_login_time` datetime not null COMMENT '最近登录时间',
@@ -29,7 +30,7 @@ CREATE TABLE `fastfood_product` (
 CREATE TABLE `fastfood_order` (
   `id` int not null AUTO_INCREMENT COMMENT 'ID',
   `user_id` int not null COMMENT '用户 ID',
-  `product_id` int not null COMMENT '菜式 ID',
+  `product_id` int COMMENT '菜式 ID',
   `product_name` varchar(64) not null COMMENT '菜式名称',
   `product_category` varchar(20) not null COMMENT '所属类别',
   `price` decimal not null COMMENT '单价',

@@ -9,6 +9,7 @@
     "lint-fix": "eslint --fix src/"
   },
   "dependencies": {
+    "js-md5": "^0.7.2",
     "request": "^2.83.0",
     "request-promise": "^4.2.2",
     "think-cache": "^1.0.0",

@@ -1,25 +1,31 @@
 const Base = require('../base.js');
 const Utils = require('../../util/utils');
 const rp = require('request-promise');
+const md5 = require('js-md5');
 
 module.exports = class extends Base {
   // 传统登录获取 jwt token
   async loginAction() {
-    if (this.post('username') === think.config('admin.username') &&
-      this.post('password') === think.config('admin.password')) {
-      const userInfo = {
-        id: 12,
-        nickname: 'demo name'
-      };
-      const jwtToken = await this.session('data', userInfo);
+    const user = await this.model('user')
+      .field(['id', 'nickname', 'gender', 'avatar_url'])
+      .where({
+        nickname: this.post('nickname')
+      })
+      .find();
 
-      return this.success({
-        token: jwtToken,
-        userInfo: userInfo
-      });
-    } else {
-      return this.fail('wrong info');
+    if (!user) {
+      return this.fail('找不到该用户');
     }
+
+    if (user.password !== md5(this.post('password'))) {
+      return this.fail('密码错误');
+    }
+
+    const jwtToken = await this.session('data', user);
+    return this.success({
+      token: jwtToken,
+      userInfo: user
+    });
   }
 
   // 微信小程序登录
@@ -54,6 +60,7 @@ module.exports = class extends Base {
         openid: sessionData.openid,
         avatar_url: userInfo.avatarUrl || '',
         nickname: userInfo.nickName,
+        password: md5('111111'),
         gender: userInfo.gender || 1,
         register_time: Utils.formatDateTime(),
         last_login_time: Utils.formatDateTime()

@@ -7,9 +7,7 @@ module.exports = class extends think.Controller {
 
     try {
       const userInfo = await this.session('data');
-      if (userInfo) {
-        think.user = userInfo;
-      } else {
+      if (!userInfo) {
         this.fail(500, '未登录');
         return false;
       }
