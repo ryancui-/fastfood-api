@@ -10,4 +10,22 @@ module.exports = class extends Base {
 
     return this.success(users);
   }
+
+  async loginAction() {
+    if (this.post('name') === think.config('admin.name') &&
+      this.post('password') === think.config('admin.password')) {
+      const userInfo = {
+        id: 12,
+        nickname: 'ggg'
+      };
+      const jwtToken = await this.session('data', userInfo);
+
+      return this.success({
+        token: jwtToken,
+        userInfo: userInfo
+      });
+    } else {
+      return this.fail('cannot login');
+    }
+  }
 };

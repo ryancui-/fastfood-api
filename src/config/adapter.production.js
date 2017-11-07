@@ -1,4 +1,5 @@
 const mysql = require('think-model-mysql');
+const JWTSession = require('think-session-jwt');
 
 /**
  * model adapter config
@@ -21,5 +22,26 @@ exports.model = {
     user: 'fastfood',
     password: '',
     dateStrings: true
+  }
+};
+
+/**
+ * session adapter config
+ * @type {Object}
+ */
+exports.session = {
+  type: 'jwt',
+  common: {
+    cookie: {
+      name: 'thinkjs'
+    }
+  },
+  jwt: {
+    handle: JWTSession,
+    secret: '',
+    tokenType: 'header',
+    tokenName: 'authorization',
+    sign: {},
+    verify: {}
   }
 };
