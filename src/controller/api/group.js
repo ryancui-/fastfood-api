@@ -2,7 +2,6 @@ const Base = require('../base.js');
 const Utils = require('../../util/utils');
 
 module.exports = class extends Base {
-
   // 新增一个订单组
   async addAction() {
     const dueTime = this.post('dueTime');
