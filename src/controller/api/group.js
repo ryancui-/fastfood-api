@@ -36,6 +36,22 @@ module.exports = class extends Base {
       return this.fail('找不到订单组');
     }
 
+    // 获取订单组的创建人
+    const composer = await this.model('user')
+      .field(['nickname', 'avatar_url', 'gender'])
+      .where({
+        id: group.composer_user_id
+      }).find();
+
+    group.composer = composer;
+
+    // 获取订单组下的所有订单
+    const orderList = await this.model('order').where({
+      group_id: groupId
+    }).select();
+
+    group.orders = orderList;
+
     return this.success(group);
   }
 };
