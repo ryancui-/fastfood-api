@@ -50,6 +50,15 @@ module.exports = class extends Base {
       group_id: groupId
     }).select();
 
+    // TODO 使用一条 SQL 语句
+    // 每个订单获取头像
+    for (let i = 0; i < orderList.length; i++) {
+      const user = await this.model('user').field('avatar_url')
+        .where({id: orderList[i].user_id}).find();
+
+      orderList[i].avatar_url = user.avatar_url;
+    }
+
     group.orders = orderList;
 
     return this.success(group);
