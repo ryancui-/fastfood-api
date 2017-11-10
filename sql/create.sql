@@ -37,6 +37,7 @@ CREATE TABLE `fastfood_order` (
   `price` decimal not null COMMENT '单价',
   `quantity` int(4) not null COMMENT '数量',
   `total_price` decimal not null COMMENT '总价',
+  `remark` varchar(128) COMMENT '备注',
   `create_time` datetime not null COMMENT '创建时间',
   `update_time` datetime not null COMMENT '更新时间',
   PRIMARY KEY (`id`)
@@ -48,7 +49,8 @@ create table `fastfood_group` (
   `composer_user_id` int not null COMMENT '发起人ID',
   `due_time` datetime COMMENT '截止时间',
   `name` varchar(32) COMMENT '组团名称',
-  `status` int(1) not null default 1 COMMENT '团状态',
+  `status` int(1) not null default 1 COMMENT '团状态:1-征集中;2-已完成;3-已取消',
   `create_time` datetime not null COMMENT '创建时间',
+  `update_time` datetime not null COMMENT '更新时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COMMENT = '组团表';

@@ -54,4 +54,16 @@ module.exports = class extends Base {
 
     return this.success(orderId);
   }
+
+  // 删除订单
+  async removeAction() {
+    const id = this.post('id');
+    if (!id) {
+      return this.fail('没有订单ID');
+    }
+
+    await this.model('order').where({id}).delete();
+
+    return this.success();
+  }
 };

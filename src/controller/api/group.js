@@ -18,7 +18,8 @@ module.exports = class extends Base {
       composer_user_id: user.id,
       due_time: dueTime,
       name: groupName,
-      create_time: Utils.formatDateTime()
+      create_time: Utils.formatDateTime(),
+      update_time: Utils.formatDateTime()
     });
 
     return this.success(groupId);
@@ -86,5 +87,22 @@ module.exports = class extends Base {
     }
 
     return this.success(groupList);
+  }
+
+  // 修改订单团状态
+  async statusAction() {
+    const id = this.post('id');
+    const status = this.post('status');
+
+    if (!id || !status) {
+      return this.fail('参数错误');
+    }
+
+    await this.model('group').where({id}).update({
+      status,
+      update_time: Utils.formatDateTime()
+    });
+
+    return this.success();
   }
 };
