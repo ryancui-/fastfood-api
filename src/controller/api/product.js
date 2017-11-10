@@ -1,4 +1,5 @@
 const Base = require('../base.js');
+const Utils = require('../../util/utils');
 
 module.exports = class extends Base {
   // 根据条件获取菜单列表（分页）
@@ -37,5 +38,53 @@ module.exports = class extends Base {
       .select();
 
     return this.success(products);
+  }
+
+  // 新增菜单信息
+  async createAction() {
+    const params = this.post();
+
+    params.create_time = Utils.formatDateTime();
+    params.update_time = Utils.formatDateTime();
+
+    const id = await this.model('product').add(params);
+
+    return this.success(id);
+  }
+
+  // 修改菜单信息
+  async editAction() {
+    const params = this.post();
+
+    const oldProduct = await this.model('product').where({
+      id: params.id
+    }).find();
+
+    if (think.isEmpty(oldProduct)) {
+      return this.fail('找不到记录');
+    }
+
+    const newProduct = think.extend({}, oldProduct, params);
+    newProduct.update_time = Utils.formatDateTime();
+
+    await this.model('product').where({
+      id: params.id
+    }).update(newProduct);
+
+    return this.success();
+  }
+
+  // 更新菜单状态
+  async statusAction() {
+    const valid = this.post('valid');
+    const id = this.post('id');
+
+    if (!id) {
+      return this.fail('没有提供ID');
+    }
+
+    await this.model('product').where({id}).update({valid});
+
+    return this.success();
   }
 };
