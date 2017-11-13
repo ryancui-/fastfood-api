@@ -1,5 +1,5 @@
-const Base = require('../base.js');
-const Utils = require('../../util/utils');
+const Base = require('./base.js');
+const Utils = require('../util/utils');
 
 module.exports = class extends Base {
   // 根据条件获取菜单列表（分页）

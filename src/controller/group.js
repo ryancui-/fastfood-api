@@ -1,5 +1,5 @@
-const Base = require('../base.js');
-const Utils = require('../../util/utils');
+const Base = require('./base.js');
+const Utils = require('../util/utils');
 
 module.exports = class extends Base {
   // 新增一个订单组

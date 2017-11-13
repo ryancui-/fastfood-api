@@ -1,5 +1,5 @@
-const Base = require('../base.js');
-const Utils = require('../../util/utils');
+const Base = require('./base.js');
+const Utils = require('../util/utils');
 const rp = require('request-promise');
 const md5 = require('js-md5');
 
