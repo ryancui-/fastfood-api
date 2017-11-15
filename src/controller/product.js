@@ -2,7 +2,7 @@ const Base = require('./base.js');
 const Utils = require('../util/utils');
 
 module.exports = class extends Base {
-  // 根据条件获取菜单列表（分页）
+  // 根据条件获取本日菜单列表（分页）
   async listAction() {
     const category = this.post('category');
     const page = this.post('page') || 1;
@@ -40,6 +40,21 @@ module.exports = class extends Base {
     return this.success(products);
   }
 
+  // 根据条件获取全部菜单（分页）
+  async listAllAction() {
+    const page = this.post('page') || 1;
+    const rows = 15;
+    const condition = this.post();
+    delete condition.page;
+
+    const products = await this.model('product').where(condition).page(page, rows).select();
+    const total = await this.model('product').where(condition).count();
+    return this.success({
+      rows: products,
+      total
+    });
+  }
+
   // 新增菜单信息
   async createAction() {
     const params = this.post();
@@ -66,6 +81,7 @@ module.exports = class extends Base {
 
     const newProduct = think.extend({}, oldProduct, params);
     newProduct.update_time = Utils.formatDateTime();
+    newProduct.create_time = oldProduct.create_time;
 
     await this.model('product').where({
       id: params.id

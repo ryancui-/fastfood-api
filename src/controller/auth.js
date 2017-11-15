@@ -1,25 +1,30 @@
 const Base = require('./base.js');
 const Utils = require('../util/utils');
 const rp = require('request-promise');
-const md5 = require('js-md5');
 
 module.exports = class extends Base {
   // 传统登录获取 jwt token
   async loginAction() {
-    const user = await this.model('user')
-      .field(['id', 'nickname', 'username', 'gender', 'avatar_url'])
+    let user = await this.model('user')
+      .field('password')
       .where({
         username: this.post('username')
       })
       .find();
 
-    if (!user) {
+    if (think.isEmpty(user)) {
       return this.fail('找不到该用户');
     }
-
-    if (user.password !== md5(this.post('password'))) {
+    if (user.password !== this.post('password')) {
       return this.fail('密码错误');
     }
+
+    user = await this.model('user')
+      .field(['id', 'nickname', 'username', 'gender', 'avatar_url'])
+      .where({
+        username: this.post('username')
+      })
+      .find();
 
     const jwtToken = await this.session('data', user);
     return this.success({
