@@ -87,4 +87,65 @@ module.exports = class extends Base {
 
     return this.success();
   }
+
+  // 添加菜单选项
+  async createOptionAction() {
+    const productId = this.post('productId');
+    const optionName = this.post('optionName');
+
+    if (!productId || !optionName) {
+      return this.fail('缺少参数');
+    }
+
+    await this.model('product_options').add({
+      product_id: productId,
+      option_name: optionName
+    });
+
+    return this.success();
+  }
+
+  // 删除菜单选项
+  async deleteOptionAction() {
+    const id = this.post('id');
+    if (!id) {
+      return this.fail('缺少参数');
+    }
+
+    await this.model('product_options').where({
+      id
+    }).delete();
+
+    return this.success();
+  }
+
+  // 修改菜单选项
+  async editOptionAction() {
+    const id = this.post('id');
+    const optionName = this.post('optionName');
+
+    if (!id || !optionName) {
+      return this.fail('缺少参数');
+    }
+
+    await this.model('product_options').where({
+      id
+    }).update({
+      option_name: optionName
+    });
+
+    return this.success();
+  }
+
+  // 获取菜单选项
+  async listOptionAction() {
+    const productId = this.get('productId');
+
+    const options = await this.model('product_options')
+      .where({
+        product_id: productId
+      }).select();
+
+    return this.success(options);
+  }
 };

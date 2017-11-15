@@ -7,9 +7,9 @@ module.exports = class extends Base {
   // 传统登录获取 jwt token
   async loginAction() {
     const user = await this.model('user')
-      .field(['id', 'nickname', 'gender', 'avatar_url'])
+      .field(['id', 'nickname', 'username', 'gender', 'avatar_url'])
       .where({
-        nickname: this.post('nickname')
+        username: this.post('username')
       })
       .find();
 
@@ -53,16 +53,15 @@ module.exports = class extends Base {
     }
 
     // 根据openid查找用户是否已经注册
-    let userId = await this.model('user').where({openid: sessionData.openid}).getField('id', true);
+    let userId = await this.model('user').where({openid_mini: sessionData.openid}).getField('id', true);
     if (think.isEmpty(userId)) {
-      // 注册
-      userId = await this.model('user').add({
-        openid: sessionData.openid,
+      // TODO 检查密码是否正确
+
+      userId = await this.model('user').where({username: this.post('username')}).update({
+        openid_mini: sessionData.openid,
         avatar_url: userInfo.avatarUrl || '',
         nickname: userInfo.nickName,
-        password: md5('111111'),
         gender: userInfo.gender || 1,
-        register_time: Utils.formatDateTime(),
         last_login_time: Utils.formatDateTime()
       });
     } else {
@@ -70,14 +69,14 @@ module.exports = class extends Base {
       userId = await this.model('user').where({id: userId}).update({
         avatar_url: userInfo.avatarUrl || '',
         nickname: userInfo.nickName,
-        gender: userInfo.gender || 1, // 性别 0：未知、1：男、2：女
+        gender: userInfo.gender || 1,
         last_login_time: Utils.formatDateTime()
       });
     }
 
     // 查询用户信息
     const newUserInfo = await this.model('user')
-      .field(['id', 'nickname', 'gender', 'avatar_url']).where({id: userId}).find();
+      .field(['id', 'nickname', 'username', 'gender', 'avatar_url']).where({id: userId}).find();
 
     const jwtToken = await this.session('data', newUserInfo);
 
