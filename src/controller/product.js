@@ -47,8 +47,25 @@ module.exports = class extends Base {
     const condition = this.post();
     delete condition.page;
 
-    const products = await this.model('product').where(condition).page(page, rows).select();
-    const total = await this.model('product').where(condition).count();
+    let query;
+
+    if (condition.q) {
+      query = {
+        _complex: {
+          name: ['LIKE', `%${condition.q}%`],
+          price: condition.q,
+          _logic: 'or'
+        },
+        ...condition
+      };
+    } else {
+      query = condition;
+    }
+
+    delete query.q;
+
+    const products = await this.model('product').where(query).page(page, rows).select();
+    const total = await this.model('product').where(query).count();
     return this.success({
       rows: products,
       total
