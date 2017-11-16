@@ -6,12 +6,17 @@ module.exports = class extends Base {
   async checkUsernameAction() {
     const username = this.post('username');
 
+    // 不允许使用 admin
+    if (username.indexOf('admin') !== -1) {
+      return this.fail(12000, '不能带有 admin');
+    }
+
     const user = await this.model('user').where({
       username
     }).find();
 
     if (!think.isEmpty(user)) {
-      return this.fail();
+      return this.fail(12001, '用户名已存在');
     }
 
     return this.success();
@@ -33,6 +38,8 @@ module.exports = class extends Base {
       register_time: Utils.formatDateTime(),
       last_login_time: Utils.formatDateTime()
     });
+
+    return this.success();
   }
 
   // 传统登录获取 jwt token
