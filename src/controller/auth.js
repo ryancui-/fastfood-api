@@ -1,6 +1,5 @@
 const Base = require('./base.js');
 const Utils = require('../util/utils');
-const rp = require('request-promise');
 
 module.exports = class extends Base {
   // 检查用户名是否合法
