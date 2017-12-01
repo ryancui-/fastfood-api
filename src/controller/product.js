@@ -36,8 +36,12 @@ module.exports = class extends Base {
       .where(query)
       .page(page, rows)
       .select();
+    const total = await this.model('product').where(query).count();
 
-    return this.success(products);
+    return this.success({
+      rows: products,
+      total
+    });
   }
 
   // 根据条件获取全部菜单（分页）

@@ -69,23 +69,6 @@ module.exports = class extends Base {
   async listAction() {
     const groupList = await this.model('group').select();
 
-    // 获取每个订单组中订单数与总价
-    for (let i = 0; i < groupList.length; i++) {
-      const totalPrice = await this.model('order')
-        .where({
-          group_id: groupList[i].id
-        }).sum('total_price');
-
-      groupList[i].total_price = totalPrice;
-
-      const composer = await this.model('user')
-        .where({
-          id: groupList[i].composer_user_id
-        }).find();
-
-      groupList[i].composer_avatar_url = composer.avatar_url;
-    }
-
     return this.success(groupList);
   }
 
