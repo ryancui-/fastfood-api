@@ -37,37 +37,17 @@ module.exports = class extends Base {
       return this.fail('找不到订单组');
     }
 
-    // 获取订单组的创建人
-    const composer = await this.model('user')
-      .field(['nickname', 'avatar_url', 'gender'])
-      .where({
-        id: group.composer_user_id
-      }).find();
-
-    group.composer = composer;
-
-    // 获取订单组下的所有订单
-    const orderList = await this.model('order').where({
-      group_id: groupId
-    }).select();
-
-    // TODO 使用一条 SQL 语句
-    // 每个订单获取头像
-    for (let i = 0; i < orderList.length; i++) {
-      const user = await this.model('user').field('avatar_url')
-        .where({id: orderList[i].user_id}).find();
-
-      orderList[i].avatar_url = user.avatar_url;
-    }
-
-    group.orders = orderList;
-
     return this.success(group);
   }
 
   // 获取所有订单组
   async listAction() {
-    const groupList = await this.model('group').select();
+    // 按创建时间倒序排列，只列出征集中的团组
+    const groupList = await this.model('group')
+      .where({
+        status: 1
+      })
+      .order('create_time desc').select();
 
     return this.success(groupList);
   }
