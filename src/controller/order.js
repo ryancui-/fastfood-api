@@ -22,6 +22,7 @@ module.exports = class extends Base {
     const order = {
       user_id: user.id,
       group_id: groupId,
+      remark: this.post('remark') || '',
       create_time: Utils.formatDateTime(),
       update_time: Utils.formatDateTime()
     };
