@@ -72,7 +72,6 @@ module.exports = class extends Base {
 
       return this.success(groupList);
     }
-
   }
 
   // 修改订单团状态
