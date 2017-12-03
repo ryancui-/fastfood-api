@@ -3,14 +3,14 @@ const Utils = require('../util/utils');
 const rp = require('request-promise');
 
 module.exports = class extends Base {
+  constructor(ctx) {
+    super(ctx);
+    this.userFields = ['id', 'nickname', 'username', 'gender', 'avatar_url', 'is_admin'];
+  }
+
   // 检查用户名是否合法
   async checkUsernameAction() {
     const username = this.post('username');
-
-    // 不允许使用 admin
-    if (username.indexOf('admin') !== -1) {
-      return this.fail(12000, '不能带有 admin');
-    }
 
     const user = await this.model('user').where({
       username
@@ -28,11 +28,6 @@ module.exports = class extends Base {
     const username = this.post('username');
     const password = this.post('password');
     const inviteCode = this.post('inviteCode');
-
-    // 不允许使用 admin
-    if (username.indexOf('admin') !== -1) {
-      return this.fail(12000, '不能带有 admin');
-    }
 
     const user = await this.model('user').where({
       username
@@ -80,7 +75,7 @@ module.exports = class extends Base {
 
     // 检查是否已绑定
     const user = await this.model('user')
-      .field(['id', 'nickname', 'username', 'gender', 'avatar_url'])
+      .field(this.userFields)
       .where({
         openid_mini: sessionData.openid
       }).find();
@@ -131,7 +126,7 @@ module.exports = class extends Base {
       });
 
     user = await this.model('user')
-      .field(['id', 'nickname', 'username', 'gender', 'avatar_url'])
+      .field(this.userFields)
       .where({
         openid_mini: openid
       })
@@ -161,7 +156,7 @@ module.exports = class extends Base {
     }
 
     user = await this.model('user')
-      .field(['id', 'nickname', 'username', 'gender', 'avatar_url'])
+      .field(this.userFields)
       .where({
         username: this.post('username')
       })

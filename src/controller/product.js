@@ -125,6 +125,13 @@ module.exports = class extends Base {
     return this.success();
   }
 
+  // 返回菜单分类列表
+  async categoriesAction() {
+    const result = await this.model('product').distinct('category').select();
+
+    return this.success(result.map(r => r.category));
+  }
+
   // 添加菜单选项
   async createOptionAction() {
     const productId = this.post('productId');
