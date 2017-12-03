@@ -10,7 +10,7 @@ CREATE TABLE `fastfood_user` (
   `gender` int(1) COMMENT '性别',
   `register_time` datetime not null COMMENT '注册时间',
   `last_login_time` datetime not null COMMENT '最近登录时间',
-  `is_admin`` tinyint default 0 COMMENT '是否管理员',
+  `is_admin` tinyint default 0 COMMENT '是否管理员',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COMMENT = '用户表';
 
