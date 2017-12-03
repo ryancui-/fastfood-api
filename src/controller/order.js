@@ -47,7 +47,7 @@ module.exports = class extends Base {
       order.price = product.price;
     }
 
-    order.quantity = this.post('quantity') || 1;
+    order.quantity = Math.floor(this.post('quantity')) || 1;
     order.total_price = order.quantity * order.price;
 
     // 新增一个订单
