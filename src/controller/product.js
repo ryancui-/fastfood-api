@@ -2,11 +2,9 @@ const Base = require('./base.js');
 const Utils = require('../util/utils');
 
 module.exports = class extends Base {
-  // 根据条件获取本日菜单列表（分页）
+  // 根据条件获取本日菜单列表
   async listAction() {
     const category = this.post('category');
-    const page = this.post('page') || 1;
-    const rows = 15;
     const today = new Date();
 
     // 判断上下中旬
@@ -34,7 +32,6 @@ module.exports = class extends Base {
 
     const products = await this.model('product')
       .where(query)
-      .page(page, rows)
       .select();
     const total = await this.model('product').where(query).count();
 

@@ -51,13 +51,13 @@ module.exports = class extends Base {
         .where({
           composer_user_id: user.id
         })
-        .order('create_time desc').select();
+        .order('create_time desc').limit(5).select();
 
       return this.success(groupList);
     } else if (type === 3) {
       // 列出我参与的所有订单团
       let groupList = await this.model('group')
-        .order('create_time desc').select();
+        .order('create_time desc').limit(5).select();
 
       groupList = groupList.filter(group => group.orders.map(o => o.user_id).includes(user.id));
 
