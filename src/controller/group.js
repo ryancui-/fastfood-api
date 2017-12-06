@@ -40,38 +40,73 @@ module.exports = class extends Base {
     return this.success(group);
   }
 
-  // 获取所有订单组
-  async listAction() {
-    const type = Number(this.get('type'));
+  // 获取征集中的所有订单组，不分页
+  async listActiveAction() {
+    // 按创建时间倒序排列，只列出征集中的团组
+    const groupList = await this.model('group')
+      .setRelation('order', false)
+      .where({
+        status: 1
+      })
+      .order('create_time desc').select();
+
+    return this.success(groupList);
+  }
+
+  // 获取我发起的订单团列表（分页）
+  async listOnwerAction() {
     const user = await this.session('data');
+    const page = this.post('page') || 1;
+    const rows = this.post('rows') || 15;
 
-    if (type === 2) {
-      // 列出我发起的所有订单团
-      const groupList = await this.model('group')
-        .where({
-          composer_user_id: user.id
-        })
-        .order('create_time desc').limit(5).select();
+    const groupList = await this.model('group')
+      .where({
+        composer_user_id: user.id
+      })
+      .order('create_time desc').page(page, rows).select();
 
-      return this.success(groupList);
-    } else if (type === 3) {
-      // 列出我参与的所有订单团
-      let groupList = await this.model('group')
-        .order('create_time desc').limit(5).select();
+    const total = await this.model('group')
+      .setRelation('order', false)
+      .where({
+        composer_user_id: user.id
+      }).count();
 
-      groupList = groupList.filter(group => group.orders.map(o => o.user_id).includes(user.id));
+    return this.success({
+      rows: groupList,
+      total
+    });
+  }
 
-      return this.success(groupList);
-    } else {
-      // 按创建时间倒序排列，只列出征集中的团组
-      const groupList = await this.model('group')
-        .where({
-          status: 1
-        })
-        .order('create_time desc').select();
+  // 获取我参与的订单团列表（分页）
+  async listMemberAction() {
+    const user = await this.session('data');
+    const page = this.post('page') || 1;
+    const rows = this.post('rows') || 15;
 
-      return this.success(groupList);
-    }
+    // 列出我参与的所有订单团
+    const groupList = await this.model('group')
+      .alias('g')
+      .where(`exists
+          (
+          SELECT 'x'
+          FROM fastfood_order o
+          WHERE o.group_id = g.id AND o.user_id = ${user.id}
+          )`)
+      .order('create_time desc').page(page, rows).select();
+
+    const total = await this.model('group')
+      .alias('g')
+      .where(`exists
+          (
+          SELECT 'x'
+          FROM fastfood_order o
+          WHERE o.group_id = g.id AND o.user_id = ${user.id}
+          )`).count();
+
+    return this.success({
+      rows: groupList,
+      total
+    });
   }
 
   // 修改订单团状态
