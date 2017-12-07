@@ -15,8 +15,8 @@ module.exports = class extends think.Controller {
     }
 
     try {
-      const userInfo = await this.session('data');
-      if (!userInfo) {
+      const userId = await this.session('data');
+      if (!userId) {
         this.fail(500, '未登录');
         return false;
       }

@@ -5,6 +5,7 @@ const notifier = require('node-notifier');
 
 const instance = new Application({
   ROOT_PATH: __dirname,
+  RESOURCE_PATH: '/Users/ryancui/fastfood-upload',
   watcher: watcher,
   transpiler: [babel, {
     presets: ['think-node']

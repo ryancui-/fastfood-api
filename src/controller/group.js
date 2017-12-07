@@ -13,9 +13,9 @@ module.exports = class extends Base {
       return this.fail('没有提供到期时间或订单组名称');
     }
 
-    const user = await this.session('data');
+    const userId = await this.session('data');
     const groupId = await this.model('group').add({
-      composer_user_id: user.id,
+      composer_user_id: userId,
       due_time: dueTime,
       name: groupName,
       create_time: Utils.formatDateTime(),
@@ -55,20 +55,20 @@ module.exports = class extends Base {
 
   // 获取我发起的订单团列表（分页）
   async listOnwerAction() {
-    const user = await this.session('data');
+    const userId = await this.session('data');
     const page = this.post('page') || 1;
     const rows = this.post('rows') || 15;
 
     const groupList = await this.model('group')
       .where({
-        composer_user_id: user.id
+        composer_user_id: userId
       })
       .order('create_time desc').page(page, rows).select();
 
     const total = await this.model('group')
       .setRelation('order', false)
       .where({
-        composer_user_id: user.id
+        composer_user_id: userId
       }).count();
 
     return this.success({
@@ -79,7 +79,7 @@ module.exports = class extends Base {
 
   // 获取我参与的订单团列表（分页）
   async listMemberAction() {
-    const user = await this.session('data');
+    const userId = await this.session('data');
     const page = this.post('page') || 1;
     const rows = this.post('rows') || 15;
 
@@ -90,7 +90,7 @@ module.exports = class extends Base {
           (
           SELECT 'x'
           FROM fastfood_order o
-          WHERE o.group_id = g.id AND o.user_id = ${user.id}
+          WHERE o.group_id = g.id AND o.user_id = ${userId}
           )`)
       .order('create_time desc').page(page, rows).select();
 
@@ -100,7 +100,7 @@ module.exports = class extends Base {
           (
           SELECT 'x'
           FROM fastfood_order o
-          WHERE o.group_id = g.id AND o.user_id = ${user.id}
+          WHERE o.group_id = g.id AND o.user_id = ${userId}
           )`).count();
 
     return this.success({

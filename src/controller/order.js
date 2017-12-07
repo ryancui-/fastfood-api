@@ -4,7 +4,7 @@ const Utils = require('../util/utils');
 module.exports = class extends Base {
   // 新增订单并添加到订单组中
   async createAction() {
-    const user = await this.session('data');
+    const userId = await this.session('data');
     const groupId = this.post('groupId');
     const productId = this.post('productId');
 
@@ -20,7 +20,7 @@ module.exports = class extends Base {
     }
 
     const order = {
-      user_id: user.id,
+      user_id: userId,
       group_id: groupId,
       remark: this.post('remark') || '',
       create_time: Utils.formatDateTime(),
