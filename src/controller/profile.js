@@ -1,7 +1,5 @@
 const Base = require('./base.js');
-
-const fs = require('fs');
-const path = require('path');
+const qiniu = require('qiniu');
 
 module.exports = class extends Base {
   constructor(ctx) {
@@ -38,21 +36,48 @@ module.exports = class extends Base {
   // 上传头像
   async uploadAvatarAction() {
     // 这里的 key 需要和 form 表单里的 name 值保持一致
-    // const user = await this.session('data');
+    const userId = await this.session('data');
     const file = think.extend({}, this.file('avatar'));
 
     const filepath = file.path;
+    think.logger.info(filepath);
 
-    // 文件上传后，需要将文件移动到项目其他地方，否则会在请求结束时删除掉该文件
-    const uploadPath = think.RESOURCE_PATH;
-    think.mkdir(uploadPath);
-    const basename = path.basename(filepath);
-    fs.renameSync(filepath, uploadPath + '/' + basename);
+    const qconfig = this.config('qiniu');
+    const mac = new qiniu.auth.digest.Mac(qconfig.access_key, qconfig.secret_key);
+    const options = {
+      scope: qconfig.bucket
+    };
+    const putPolicy = new qiniu.rs.PutPolicy(options);
 
-    file.path = uploadPath + '/' + basename;
+    const uploadToken = putPolicy.uploadToken(mac);
+    const config = new qiniu.conf.Config();
+    config.zone = qiniu.zone.Zone_z2;
 
-    think.logger.info(file.path);
+    var formUploader = new qiniu.form_up.FormUploader(config);
+    var putExtra = new qiniu.form_up.PutExtra();
+    const key = 'fastfood_' + think.uuid().replace(/-/g, '');
 
-    return this.success();
+    const uploadSuccess = await new Promise((resolve, reject) => {
+      formUploader.putFile(uploadToken, key, filepath, putExtra,
+        function (respErr, respBody, respInfo) {
+          if (respErr) {
+            resolve(false);
+          }
+
+          if (respInfo.statusCode === 200) {
+            resolve(true);
+          } else {
+            resolve(false);
+          }
+        });
+    });
+
+    if (uploadSuccess) {
+      const avatarUrl = '//' + qconfig.domain + '/' + key + '-small';
+      await this.model('user').where({id: userId}).update({avatar_url: avatarUrl});
+      return this.success();
+    } else {
+      return this.fail('上传失败了');
+    }
   }
 };

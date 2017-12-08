@@ -1,9 +1,6 @@
 const Base = require('./base.js');
 const Utils = require('../util/utils');
 
-const fs = require('fs');
-const path = require('path');
-
 module.exports = class extends Base {
   constructor(ctx) {
     super(ctx);

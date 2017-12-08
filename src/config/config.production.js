@@ -1,5 +1,11 @@
 // production config, it will load in production enviroment
 module.exports = {
   workers: 0,
-  inviteCode: ''
+  inviteCode: '',
+  qiniu: {
+    access_key: '',
+    secret_key: '',
+    bucket: '',
+    domain: ''
+  }
 };
