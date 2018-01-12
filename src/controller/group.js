@@ -109,6 +109,34 @@ module.exports = class extends Base {
     });
   }
 
+  /**
+   * 移动端获取所有征集中与前五位我参与的订单团
+   * @return {Promise.<void>}
+   */
+  async listMobileAction() {
+    const userId = await this.session('data');
+
+    const waitingGroups = await this.model('group')
+      .setRelation('order', false)
+      .where({
+        status: 1
+      })
+      .order('create_time desc').select();
+
+    const groupList = await this.model('group')
+      .setRelation('order', false)
+      .alias('g')
+      .where(`g.status != 1 and exists
+          (
+          SELECT 'x'
+          FROM fastfood_order o
+          WHERE o.group_id = g.id AND o.user_id = ${userId}
+          )`)
+      .order('create_time desc').limit(5).select();
+
+    return this.success([...waitingGroups, ...groupList]);
+  }
+
   // 修改订单团状态
   async statusAction() {
     const id = this.post('id');
