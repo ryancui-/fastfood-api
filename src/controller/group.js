@@ -110,7 +110,7 @@ module.exports = class extends Base {
   }
 
   /**
-   * 移动端获取所有征集中与前五位我参与的订单团
+   * 移动端获取两个所有征集中与我参与的订单团
    * @return {Promise.<void>}
    */
   async listMobileAction() {
@@ -124,20 +124,21 @@ module.exports = class extends Base {
       .order('create_time desc').select();
 
     const groupList = await this.model('group')
-      .setRelation('order', false)
       .alias('g')
-      .where(`g.status != 1 and exists
+      .where(`g.status = 2 and exists
           (
           SELECT 'x'
           FROM fastfood_order o
           WHERE o.group_id = g.id AND o.user_id = ${userId}
           )`)
-      .order('create_time desc').limit(5).select();
+      .order('create_time desc').limit(2).select();
 
     return this.success([...waitingGroups, ...groupList]);
   }
 
-  // 修改订单团状态
+  /**
+   * 修改订单团状态
+   */
   async statusAction() {
     const id = this.post('id');
     const status = this.post('status');
